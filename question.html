@@ -1,51 +1,215 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>질문 게시판</title>
-<style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0b0f2b;
-    color: white;
-  }
-  header {
-    background: linear-gradient(to right, #0d1b52, #1b2f80);
-    padding: 20px;
-    text-align: center;
-  }
-  .card {
-    background: #161b4a;
-    padding: 15px;
-    border-radius: 10px;
-    margin: 10px;
-  }
-  input, button {
-    padding: 8px;
-    margin: 5px 0;
-  }
-  footer {
-    position: fixed;
-    bottom: 8px;
-    width: 100%;
-    text-align: center;
-    color: #aaa;
-    font-size: 12px;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>질문 게시판 - DEEP SKY</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #0b0f2b;
+            color: white;
+        }
+
+        /* 상단 통합 바 (로고 + 로그인 상태) */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: #070a1d;
+            border-bottom: 1px solid #1b2f80;
+        }
+
+        /* 왼쪽 로고 영역 */
+        .logo-area {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .logo-area img {
+            width: 35px;
+            height: 35px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+
+        .logo-area span {
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: -0.5px;
+        }
+
+        /* 오른쪽 로그인 상태 영역 */
+        .auth-bar {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .auth-bar button {
+            padding: 5px 12px;
+            margin-left: 10px;
+            border-radius: 5px;
+            border: none;
+            background: #3a5aff;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .auth-bar button:hover {
+            background: #2847d6;
+        }
+
+        header {
+            background: linear-gradient(to right, #0d1b52, #1b2f80);
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #11153a;
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #2d367a;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover { color: #7fc7ff; }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+            padding-bottom: 80px;
+        }
+
+        .card {
+            background: #161b4a;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #2d367a;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* 입력창 디자인 */
+        input[type="text"] {
+            width: calc(100% - 100px);
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #1b2f80;
+            background: #0b0f2b;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .btn-main {
+            padding: 12px 20px;
+            background: #3a5aff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-answer {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .hidden { display: none; }
+
+        footer {
+            background-color: #070a1d;
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+            color: #888;
+            border-top: 1px solid #1b2f80;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .answer-area {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #2d367a;
+        }
+    </style>
 </head>
 <body>
+
+<div class="top-bar">
+    <a href="index.html" class="logo-area">
+        <img src="logo.png" alt="로고" onerror="this.src='https://via.placeholder.com/35?text=★'"> 
+        <span>DEEP SKY</span>
+    </a>
+    <div class="auth-bar">
+        <span id="userStatus">불러오는 중...</span>
+        <button id="loginBtn" onclick="location.href='login.html'">로그인</button>
+        <button id="logoutBtn" class="hidden">로그아웃</button>
+    </div>
+</div>
+
 <header>
-  <h2>질문 게시판</h2>
-  <button onclick="logout()">로그인</button>
+    <h1>질문 게시판</h1>
 </header>
 
-<h3>질문 남기기</h3>
-<input id="qInput" placeholder="질문 입력">
-<button onclick="addQuestion()">등록</button>
-<hr>
-<div id="questionList"></div>
+<nav>
+    <a href="index.html">홈</a>
+    <!-- <a href="introduce.html">소개</a> -->
+    <a href="question.html">질문</a>
+    <a href="activity.html">활동 사진</a>
+    <a href="resource.html">자료실</a>
+</nav>
+
+<div class="container">
+    <div class="card" style="text-align: center;">
+    <h3>궁금한 점을 남겨주세요!</h3>
+    <input type="text" id="qInput" placeholder="동아리나 천문학에 대해 질문하세요.">
+    <button class="btn-main" onclick="addQuestion()">등록</button>
+    
+    <div style="margin-top: 20px; border-top: 1px solid #2d367a; padding-top: 15px;">
+        <input type="text" id="qSearch" placeholder="질문 내용 검색..." onkeyup="filterQuestions()" style="width: 100%;">
+    </div>
+    </div>
+
+    <div id="questionList">
+        </div>
+</div>
+
+<footer>
+    © DEEP SKY(복성고 과학 동아리) | All rights reserved | Designed by jw-astro09
+</footer>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -53,13 +217,13 @@
 
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyBX9JG1Ngnx_Pt02ROG2Hp69rnNbK0Pjp8",
-  authDomain: "clubquestion.firebaseapp.com",
-  databaseURL: "https://clubquestion-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId: "clubquestion",
-  storageBucket: "clubquestion.firebasestorage.app",
-  messagingSenderId: "730586449237",
-  appId: "1:730586449237:web:81b733cf9fc3a5b67fdbdc"
+    apiKey: "AIzaSyBX9JG1Ngnx_Pt02ROG2Hp69rnNbK0Pjp8",
+    authDomain: "clubquestion.firebaseapp.com",
+    databaseURL: "https://clubquestion-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    projectId: "clubquestion",
+    storageBucket: "clubquestion.firebasestorage.app",
+    messagingSenderId: "730586449237",
+    appId: "1:730586449237:web:81b733cf9fc3a5b67fdbdc"
 };
 firebase.initializeApp(firebaseConfig);
 
@@ -71,85 +235,118 @@ let isAdmin = false;
 let isLoggedIn = false;
 let currentUserName = "";
 
-// 로그인 상태 확인
 auth.onAuthStateChanged(user => {
-  if(user) {
-    isLoggedIn = true;
-    currentUserName = user.displayName || user.email;
-    isAdmin = (user.email === ADMIN_EMAIL);
-  }
-  loadQuestions();
+    const userStatus = document.getElementById("userStatus");
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    if(user) {
+        isLoggedIn = true;
+        currentUserName = user.displayName || user.email.split('@')[0];
+        isAdmin = (user.email === ADMIN_EMAIL);
+        userStatus.innerText = `${currentUserName}님`;
+        loginBtn.classList.add("hidden");
+        logoutBtn.classList.remove("hidden");
+    } else {
+        isLoggedIn = false;
+        userStatus.innerText = "비로그인 상태";
+        loginBtn.classList.remove("hidden");
+        logoutBtn.classList.add("hidden");
+    }
+    loadQuestions();
 });
 
-// 로그아웃
 function logout() {
-  auth.signOut().then(() => location.href = "login.html");
+    if(confirm("로그아웃 하시겠습니까?")) {
+        auth.signOut().then(() => location.href = "index.html");
+    }
 }
 
-// 질문 등록
 function addQuestion() {
-  const q = document.getElementById("qInput").value.trim();
-  if(!q) return;
+    const q = document.getElementById("qInput").value.trim();
+    if(!q) return alert("질문을 입력해주세요.");
 
-  db.ref("questions").push({
-    question: q,
-    answer: ""
-  }).then(() => {
-    document.getElementById("qInput").value = "";
-    loadQuestions();
-  }).catch(err => alert("질문 등록 실패: " + err.message));
+    // 질문 등록 시 작성자 이메일(ownerEmail) 필드 추가
+    db.ref("questions").push({
+        question: q,
+        answer: "",
+        ownerEmail: auth.currentUser ? auth.currentUser.email : "guest", // 로그인 안 했을 경우 대비
+        createdAt: firebase.database.ServerValue.TIMESTAMP
+    }).then(() => {
+        document.getElementById("qInput").value = "";
+    }).catch(err => alert("등록 실패: " + err.message));
+    // isAdmin 조건 옆에 본인 확인 조건 추가
+if(isAdmin || (auth.currentUser && auth.currentUser.email === data.ownerEmail)) {
+    html += `<button class="btn-delete" onclick="deleteQ('${data.key}')">삭제</button>`;
+}
 }
 
-// 질문 불러오기
 function loadQuestions() {
-  db.ref("questions").on("value", snap => {
-    const list = document.getElementById("questionList");
-    list.innerHTML = "";
-    snap.forEach(child => {
-      const data = child.val();
-      const key = child.key;
+    db.ref("questions").on("value", snap => {
+        const list = document.getElementById("questionList");
+        list.innerHTML = "";
+        const dataArr = [];
+        snap.forEach(child => {
+            dataArr.unshift({ key: child.key, ...child.val() }); // 최신 질문이 위로
+        });
 
-      let html = `<div class="card">
-        <b>Q:</b> ${data.question}<br>
-        <b>A:</b> ${data.answer || "미답변"}<br>
-        ${data.answerBy ? `<small>${data.answerBy}</small><br>` : ""}`;
+        dataArr.forEach(data => {
+            let html = `
+                <div class="card">
+                    <div style="font-size: 1.1em; margin-bottom: 10px;">
+                        <span style="color: #7fc7ff; font-weight: bold;">Q.</span> ${data.question}
+                    </div>
+                    <div class="answer-area">
+                        <span style="color: #28a745; font-weight: bold;">A.</span> 
+                        ${data.answer ? data.answer : "<span style='color:#666'>답변을 기다리는 중입니다.</span>"}
+                        ${data.answerBy ? `<br><small style='color:#aaa'>- 답변자: ${data.answerBy}</small>` : ""}
+                    </div>`;
 
-      if(isLoggedIn) {
-        html += `<input id="a_${key}" placeholder="답변 입력">
-                 <button onclick="saveAnswer('${key}')">답변</button>`;
-      }
+            if(isLoggedIn) {
+                html += `
+                    <div style="margin-top: 15px;">
+                        <input type="text" id="a_${data.key}" placeholder="답변을 입력하세요" style="width: 70%; padding: 5px;">
+                        <button class="btn-answer" onclick="saveAnswer('${data.key}')">답변</button>
+                        ${isAdmin ? `<button class="btn-delete" onclick="deleteQ('${data.key}')">삭제</button>` : ""}
+                    </div>`;
+            }
 
-      if(isAdmin) {
-        html += `<button onclick="deleteQ('${key}')">삭제</button>`;
-      }
-
-      html += `</div>`;
-      list.innerHTML += html;
+            html += `</div>`;
+            list.innerHTML += html;
+        });
     });
-  });
 }
 
-// 답변 저장
 function saveAnswer(key) {
-  const val = document.getElementById("a_" + key).value.trim();
-  db.ref("questions/" + key).update({
-    answer: val,
-    answerBy: currentUserName
-  });
+    const val = document.getElementById("a_" + key).value.trim();
+    if(!val) return alert("답변 내용을 입력하세요.");
+    db.ref("questions/" + key).update({
+        answer: val,
+        answerBy: currentUserName
+    }).then(() => alert("답변이 등록되었습니다."));
 }
 
-// 질문 삭제
 function deleteQ(key) {
-  if(confirm("삭제할까요?")) {
-    db.ref("questions/" + key).remove();
-  }
+    if(confirm("이 질문을 삭제할까요?")) {
+        db.ref("questions/" + key).remove();
+    }
+}
+
+function filterQuestions() {
+    const searchTerm = document.getElementById("qSearch").value.toLowerCase();
+    const cards = document.getElementById("questionList").getElementsByClassName("card");
+
+    for (let card of cards) {
+        // 질문(Q)과 답변(A) 텍스트를 모두 검색 범위에 포함
+        const text = card.innerText.toLowerCase();
+        if (text.includes(searchTerm)) {
+            card.style.display = "";
+        } else {
+            card.style.display = "none";
+        }
+    }
 }
 </script>
 
-<footer>
-  © DEEP SKY(복성고 과학 동아리) | All rights reserved | Designed by Chatgpt, Gemini, jw-astro09
-</footer>
 </body>
 </html>
-
-
