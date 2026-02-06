@@ -161,7 +161,7 @@ function loadResources() {
                 <td>${res.title}</td>
                 <td style="color:#7fc7ff; font-size:12px;">${res.ownerName || "익명"}</td>
                 <td>
-                    <a href="${res.url}" target="_blank" class="download-link">다운로드/보기</a>
+                    <a href="${res.url}" target="_blank" class="download-link">보기</a>
                     ${(isAdmin || isOwner) ? `<button class="delete-btn" onclick="deleteRes('${key}')">삭제</button>` : ""}
                 </td>
             `;
@@ -195,3 +195,4 @@ function logout() {
 </script>
 </body>
 </html>
+
