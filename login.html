@@ -5,62 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인 - DEEP SKY</title>
     <style>
-        /* 1. 공통 스타일 및 초기화 */
+        /* 기존 스타일 유지 */
         * { box-sizing: border-box; }
-        body { 
-            margin: 0; font-family: "Segoe UI", AppleSDGothicNeo-Regular, sans-serif; 
-            background: #0b0f2b; color: white; line-height: 1.6;
-            display: flex; flex-direction: column; min-height: 100vh;
-        }
-
-        /* 2. 상단 바 (디자인 통일: 높이 60px, 로고 18px) */
-        .top-bar {
-            display: flex; align-items: center;
-            padding: 0 20px; background: #070a1d; border-bottom: 1px solid #1b2f80;
-            height: 60px; width: 100%;
-        }
+        body { margin: 0; font-family: "Segoe UI", sans-serif; background: #0b0f2b; color: white; min-height: 100vh; display: flex; flex-direction: column; }
+        .top-bar { display: flex; align-items: center; padding: 0 20px; background: #070a1d; border-bottom: 1px solid #1b2f80; height: 60px; }
         .logo-area { display: flex; align-items: center; text-decoration: none; color: white; }
         .logo-area img { width: 35px; height: 35px; margin-right: 10px; border-radius: 50%; }
-        .logo-area span { font-size: 18px; font-weight: bold; letter-spacing: -0.5px; }
+        .logo-area span { font-size: 18px; font-weight: bold; }
 
-        /* 3. 로그인 컨테이너 */
-        .login-container {
-            flex: 1; display: flex; align-items: center; justify-content: center;
-            padding: 20px;
-        }
-        .login-box {
-            width: 100%; max-width: 400px; background: #161b4a; 
-            padding: 40px 30px; border-radius: 20px; border: 1px solid #2d367a;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center;
-        }
-        .login-box h2 { color: #7fc7ff; margin-bottom: 30px; font-size: 24px; }
+        .login-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .login-box { width: 100%; max-width: 400px; background: #161b4a; padding: 40px 30px; border-radius: 20px; border: 1px solid #2d367a; text-align: center; }
+        .login-box h2 { color: #7fc7ff; margin-bottom: 30px; }
         
         .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group label { display: block; font-size: 13px; color: #aaa; margin-bottom: 5px; margin-left: 5px; }
-        input { 
-            width: 100%; padding: 12px; border-radius: 8px; 
-            border: 1px solid #1b2f80; background: #0b0f2b; color: white; 
-            font-size: 15px; outline: none;
-        }
+        .input-group label { display: block; font-size: 13px; color: #aaa; margin-bottom: 5px; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #1b2f80; background: #0b0f2b; color: white; outline: none; }
         input:focus { border-color: #3a5aff; }
 
         .btn-group { margin-top: 25px; display: flex; flex-direction: column; gap: 10px; }
-        button { 
-            width: 100%; padding: 13px; border-radius: 8px; border: none;
-            font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s;
-        }
+        button { width: 100%; padding: 13px; border-radius: 8px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn-login { background: #3a5aff; color: white; }
-        .btn-login:hover { background: #2847d6; }
         .btn-signup { background: transparent; color: #7fc7ff; border: 1px solid #3a5aff; }
-        .btn-signup:hover { background: rgba(58, 90, 255, 0.1); }
+        
+        /* 추가 스타일 */
+        .link-group { margin-top: 15px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .sub-link { color: #7fc7ff; font-size: 13px; text-decoration: none; cursor: pointer; }
+        .sub-link:hover { text-decoration: underline; }
+        .info-text { margin-top: 20px; font-size: 12px; color: #666; }
 
         footer { background: #070a1d; text-align: center; padding: 20px; font-size: 12px; color: #888; border-top: 1px solid #1b2f80; }
-
-        /* 4. 모바일 반응형 */
-        @media (max-width: 600px) {
-            .logo-area span { font-size: 16px; }
-            .login-box { padding: 30px 20px; }
-        }
     </style>
 </head>
 <body>
@@ -77,7 +50,7 @@
         <h2>로그인/회원가입</h2>
         
         <div class="input-group">
-            <label>이름 (가입 시에만 사용)</label>
+            <label>이름 (회원가입시)</label>
             <input type="text" id="name" placeholder="실명을 입력해주세요">
         </div>
         <div class="input-group">
@@ -86,78 +59,118 @@
         </div>
         <div class="input-group">
             <label>비밀번호</label>
-            <input type="password" id="password" placeholder="6자리 이상 입력">
+            <input type="password" id="password" placeholder="6자리 이상">
         </div>
 
         <div class="btn-group">
             <button class="btn-login" onclick="login()">로그인</button>
-            <button class="btn-signup" onclick="signup()">새 계정 만들기</button>
+            <button class="btn-signup" onclick="signup()">회원가입</button>
         </div>
         
-        <p style="margin-top: 20px; font-size: 12px; color: #666;">
-            가입한 이메일과 비밀번호를 잊으셨을 경우 <br> 동아리 관리자에게 문의하세요.<br>mail:2jw5464@gmail.com
+        <div class="link-group">
+            <a class="sub-link" onclick="resetPassword()">비밀번호 찾기</a>
+            <a class="sub-link" onclick="updateEmail()">이메일 변경</a>
+        </div>
+
+        <p class="info-text">
+            이메일 인증이 완료되어야 활동이 가능합니다.<br>
+            문의: leader.DEEPSKY@gmail.com
         </p>
     </div>
 </div>
 
-<footer>© DEEP SKY | Bokseong Astronomy and Aerospace Club | All rights reserved.</footer>
+<footer>© DEEP SKY | Bokseong Astronomy and Aerospace Club</footer>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <script>
-const firebaseConfig = {
-    apiKey: "AIzaSyBX9JG1Ngnx_Pt02ROG2Hp69rnNbK0Pjp8",
-    authDomain: "clubquestion.firebaseapp.com",
-    projectId: "clubquestion",
-    storageBucket: "clubquestion.firebasestorage.app",
-    messagingSenderId: "730586449237",
-    appId: "1:730586449237:web:81b733cf9fc3a5b67fdbdc"
-};
+    const firebaseConfig = {
+        apiKey: "AIzaSyBX9JG1Ngnx_Pt02ROG2Hp69rnNbK0Pjp8",
+        authDomain: "clubquestion.firebaseapp.com",
+        projectId: "clubquestion",
+        storageBucket: "clubquestion.firebasestorage.app",
+        messagingSenderId: "730586449237",
+        appId: "1:730586449237:web:81b733cf9fc3a5b67fdbdc"
+    };
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-// 1. 회원가입 함수
-function signup() {
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const pw = document.getElementById("password").value.trim();
+    // 1. 회원가입 + 이메일 인증 발송
+    function signup() {
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const pw = document.getElementById("password").value.trim();
 
-    if(!name || !email || !pw) return alert("모든 항목을 입력해주세요.");
-    if(pw.length < 6) return alert("비밀번호는 6자리 이상이어야 합니다.");
+        if(!name || !email || !pw) return alert("모든 항목을 입력해주세요.");
 
-    auth.createUserWithEmailAndPassword(email, pw)
-        .then(result => {
-            // 가입 후 닉네임(실명) 설정
-            return result.user.updateProfile({ displayName: name });
-        })
-        .then(() => {
-            alert("회원가입이 완료되었습니다! 반갑습니다.");
-            location.href = "index.html";
-        })
-        .catch(err => {
-            alert("가입 실패: " + err.message);
-        });
-}
+        auth.createUserWithEmailAndPassword(email, pw)
+            .then(result => {
+                result.user.updateProfile({ displayName: name });
+                // 인증 메일 발송
+                return result.user.sendEmailVerification();
+            })
+            .then(() => {
+                alert("가입 성공! 입력하신 이메일로 인증 메일을 보냈습니다.\n인증 후 로그인이 가능합니다.");
+                location.href = "index.html";
+            })
+            .catch(err => alert("가입 실패: " + err.message));
+    }
 
-// 2. 로그인 함수
-function login() {
-    const email = document.getElementById("email").value.trim();
-    const pw = document.getElementById("password").value.trim();
+    // 2. 로그인 + 인증 여부 확인
+    function login() {
+        const email = document.getElementById("email").value.trim();
+        const pw = document.getElementById("password").value.trim();
 
-    if(!email || !pw) return alert("이메일과 비밀번호를 입력해주세요.");
+        if(!email || !pw) return alert("이메일과 비밀번호를 입력해주세요.");
 
-    auth.signInWithEmailAndPassword(email, pw)
-        .then(() => {
-            alert("로그인 성공!");
-            location.href = "index.html";
-        })
-        .catch(err => {
-            alert("로그인 실패: " + err.message);
-        });
-}
+        auth.signInWithEmailAndPassword(email, pw)
+            .then(result => {
+                // 이메일 인증 확인
+                if (!result.user.emailVerified) {
+                    alert("이메일 인증이 완료되지 않았습니다. 메일함을 확인해주세요!");
+                    auth.signOut(); // 인증 안됐으면 다시 로그아웃
+                } else {
+                    alert("로그인 성공!");
+                    location.href = "index.html";
+                }
+            })
+            .catch(err => alert("로그인 실패: " + err.message));
+    }
+
+    // 3. 비밀번호 재설정
+    function resetPassword() {
+        const email = document.getElementById("email").value.trim();
+        if (!email) return alert("이메일을 먼저 입력해주세요.");
+        
+        auth.sendPasswordResetEmail(email)
+            .then(() => alert("비밀번호 재설정 메일을 보냈습니다."))
+            .catch(err => alert("에러: " + err.message));
+    }
+
+    // 4. 이메일 주소 변경 (로그인 상태에서만 가능)
+    function updateEmail() {
+        const user = auth.currentUser;
+        if (!user) return alert("로그인한 상태에서만 변경이 가능합니다.");
+
+        const newEmail = prompt("새로운 이메일 주소를 입력하세요:");
+        if (newEmail) {
+            user.updateEmail(newEmail)
+                .then(() => {
+                    user.sendEmailVerification();
+                    alert("이메일이 변경되었습니다. 새 메일함에서 인증해주세요.");
+                })
+                .catch(err => {
+                    if (err.code === 'auth/requires-recent-login') {
+                        alert("보안을 위해 다시 로그인한 후 변경해주세요.");
+                        auth.signOut();
+                    } else {
+                        alert("에러: " + err.message);
+                    }
+                });
+        }
+    }
 </script>
-
 </body>
 </html>
