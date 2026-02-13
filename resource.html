@@ -49,8 +49,16 @@
         .delete-btn { background: #ff4d4d; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-left: 10px; font-size: 12px; }
 
         .hidden { display: none !important; }
-        footer { background: #070a1d; text-align: center; padding: 20px; font-size: 12px; color: #888; border-top: 1px solid #1b2f80; position: fixed; bottom: 0; width: 100%; }
-
+        footer { 
+    background: #070a1d; 
+    text-align: center; 
+    padding: 30px 20px; /* 여백을 조금 더 주면 깔끔합니다 */
+    font-size: 12px; 
+    color: #888; 
+    border-top: 1px solid #1b2f80; 
+    width: 100%;
+    margin-top: 50px; /* 게시글 끝과 푸터 사이의 간격 */
+}
         @media (max-width: 600px) {
             .logo-area span { font-size: 16px; }
             th, td { padding: 10px; font-size: 13px; }
@@ -246,3 +254,4 @@ function uploadResource() {
 </script>
 </body>
 </html>
+
