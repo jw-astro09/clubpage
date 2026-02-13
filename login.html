@@ -90,12 +90,13 @@
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyArvtIZ3QkwUcvz0SLu-AnLRifhkOtQ9CY",
-  authDomain: "bokseong-deep-sky.firebaseapp.com",
-  databaseURL: "https://bokseong-deep-sky-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "bokseong-deep-sky",
-  storageBucket: "bokseong-deep-sky.firebasestorage.app",
-  messagingSenderId: "800777151311",
-  appId: "1:800777151311:web:8c901fcf0ded04b1941b3a"
+        authDomain: "bokseong-deep-sky.firebaseapp.com",
+        databaseURL: "https://bokseong-deep-sky-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "bokseong-deep-sky",
+        storageBucket: "bokseong-deep-sky.firebasestorage.app",
+        messagingSenderId: "800777151311",
+        appId: "1:800777151311:web:8c901fcf0ded04b1941b3a",
+        measurementId: "G-LNZFCW099Z"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -179,19 +180,31 @@
     // 구글 로그인 Provider 설정
 const provider = new firebase.auth.GoogleAuthProvider();
 
-function googleLogin() {
-    auth.signInWithPopup(provider)
-        .then((result) => {
-            // 구글 로그인은 이메일 인증이 이미 완료된 것으로 간주하는 경우가 많지만, 
-            // 보안을 위해 체크하거나 바로 메인으로 이동시킵니다.
-            alert(result.user.displayName + "님, 환영합니다!");
-            location.href = "index.html";
-        })
-        .catch((error) => {
-            console.error("구글 로그인 에러:", error);
-            alert("구글 로그인에 실패했습니다: " + error.message);
-        });
-}
+    // 2. 초기화 (v9 Compat 방식)
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    // 3. 구글 로그인 함수 (에러 디버깅 강화)
+    function googleLogin() {
+        auth.signInWithPopup(provider)
+            .then((result) => {
+                alert(result.user.displayName + "님, 환영합니다!");
+                location.href = "index.html";
+            })
+            .catch((error) => {
+                console.error("상세 에러 정보:");
+                console.dir(error); // 브라우저 콘솔에서 에러 객체 전체 확인 가능
+                
+                if (error.code === 'auth/unauthorized-domain') {
+                    alert("에러: 현재 도메인이 Firebase에 등록되지 않았습니다.\nFirebase 콘솔에서 localhost를 추가했는지 확인해주세요.");
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    alert("에러: Firebase 콘솔에서 구글 로그인이 활성화되지 않았습니다.");
+                } else {
+                    alert("구글 로그인 실패: " + error.message);
+                }
+            });
+    }
 </script>
 </body>
 </html>
