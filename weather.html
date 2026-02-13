@@ -115,13 +115,13 @@
 <script>
 // Firebase 설정 (index.html과 동일해야 함)
 const firebaseConfig = {
-    apiKey: "AIzaSyBX9JG1Ngnx_Pt02ROG2Hp69rnNbK0Pjp8",
-    authDomain: "clubquestion.firebaseapp.com",
-    databaseURL: "https://clubquestion-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    projectId: "clubquestion",
-    storageBucket: "clubquestion.firebasestorage.app",
-    messagingSenderId: "730586449237",
-    appId: "1:730586449237:web:81b733cf9fc3a5b67fdbdc"
+    apiKey: "AIzaSyArvtIZ3QkwUcvz0SLu-AnLRifhkOtQ9CY",
+  authDomain: "bokseong-deep-sky.firebaseapp.com",
+  databaseURL: "https://bokseong-deep-sky-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "bokseong-deep-sky",
+  storageBucket: "bokseong-deep-sky.firebasestorage.app",
+  messagingSenderId: "800777151311",
+  appId: "1:800777151311:web:8c901fcf0ded04b1941b3a"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -157,8 +157,8 @@ function logout() {
         img.src = "https://www.kma.go.kr/w/repositary/image/sat/gk2a/ko/gk2a_ami_le1b_ir105_ko020lc_latest.png?t=" + timestamp;
     }
 
-    // 5분(300,000ms)마다 새로고침 실행
-    setInterval(refreshSatellite, 30000);
+    // 1분(60,000ms)마다 새로고침 실행
+    setInterval(refreshSatellite, 60000);
 </script>
 </body>
 </html>
