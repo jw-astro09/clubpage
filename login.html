@@ -22,10 +22,13 @@
         input:focus { border-color: #3a5aff; }
 
         .btn-group { margin-top: 25px; display: flex; flex-direction: column; gap: 10px; }
-        button { width: 100%; padding: 13px; border-radius: 8px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button { width: 100%; padding: 13px; border-radius: 8px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-login { background: #3a5aff; color: white; }
         .btn-signup { background: transparent; color: #7fc7ff; border: 1px solid #3a5aff; }
-        .btn-google { background: white; color: #444; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-google { background: white; color: #444; border: 1px solid #ddd; }
+        /* GitHub 버튼 스타일 추가 */
+        .btn-github { background: #24292e; color: white; }
+        .btn-github img { filter: invert(1); } /* GitHub 로고를 흰색으로 */
         
         .link-group { margin-top: 15px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
         .sub-link { color: #7fc7ff; font-size: 13px; text-decoration: none; cursor: pointer; }
@@ -64,8 +67,13 @@
         <div class="btn-group">
             <button class="btn-login" onclick="login()">로그인</button>
             <button class="btn-signup" onclick="signup()">회원가입</button>
+            
             <button type="button" class="btn-google" onclick="googleLogin()">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Google로 시작하기
+            </button>
+            
+            <button type="button" class="btn-github" onclick="githubLogin()">
+                <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" width="18"> GitHub로 시작하기
             </button>
         </div>
         
@@ -87,7 +95,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <script>
-    // 제공해주신 최신 설정값 적용
     const firebaseConfig = {
         apiKey: "AIzaSyArvtIZ3QkwUcvz0SLu-AnLRifhkOtQ9CY",
         authDomain: "bokseong-deep-sky.firebaseapp.com",
@@ -99,32 +106,48 @@
         measurementId: "G-LNZFCW099Z"
     };
 
-    // Firebase 초기화
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-    const provider = new firebase.auth.GoogleAuthProvider();
+    
+    // Provider 정의
+    const googleProvider = new firebase.auth.GoogleAuthProvider();
+    const githubProvider = new firebase.auth.GithubAuthProvider();
 
     // 1. 구글 로그인
     function googleLogin() {
-        auth.signInWithPopup(provider)
+        auth.signInWithPopup(googleProvider)
             .then((result) => {
                 alert(result.user.displayName + "님, 환영합니다!");
                 location.href = "index.html";
             })
-            .catch((error) => {
-                console.error("Google Auth Error:", error);
-                // "The requested action is invalid" 등의 에러 발생 시 알림
-                if (error.code === 'auth/operation-not-allowed') {
-                    alert("Firebase 콘솔에서 Google 로그인을 활성화하고 '지원 이메일'을 설정했는지 확인하세요.");
-                } else if (error.code === 'auth/unauthorized-domain') {
-                    alert("이 도메인(localhost 등)이 Firebase 승인된 도메인에 등록되어 있지 않습니다.");
-                } else {
-                    alert("오류 발생: " + error.message);
-                }
-            });
+            .catch((error) => handleAuthError(error));
     }
 
-    // 2. 이메일 회원가입
+    // 2. 깃허브 로그인 추가
+    function githubLogin() {
+        auth.signInWithPopup(githubProvider)
+            .then((result) => {
+                alert(result.user.displayName + "님, 환영합니다! (GitHub)");
+                location.href = "index.html";
+            })
+            .catch((error) => handleAuthError(error));
+    }
+
+    // 공통 에러 핸들러
+    function handleAuthError(error) {
+        console.error("Auth Error:", error);
+        if (error.code === 'auth/operation-not-allowed') {
+            alert("Firebase 콘솔에서 해당 로그인 수단이 활성화되어 있는지 확인하세요.");
+        } else if (error.code === 'auth/unauthorized-domain') {
+            alert("이 도메인이 Firebase 승인된 도메인에 등록되어 있지 않습니다.");
+        } else if (error.code === 'auth/account-exists-with-different-credential') {
+            alert("이미 다른 로그인 방식으로 가입된 이메일입니다.");
+        } else {
+            alert("오류 발생: " + error.message);
+        }
+    }
+
+    // 3. 이메일 회원가입
     function signup() {
         const name = document.getElementById("name").value.trim();
         const email = document.getElementById("email").value.trim();
@@ -144,7 +167,7 @@
             .catch(err => alert("가입 실패: " + err.message));
     }
 
-    // 3. 이메일 로그인
+    // 4. 이메일 로그인
     function login() {
         const email = document.getElementById("email").value.trim();
         const pw = document.getElementById("password").value.trim();
@@ -164,17 +187,16 @@
             .catch(err => alert("로그인 실패: " + err.message));
     }
 
-    // 4. 비밀번호 재설정
+    // 5. 비밀번호 재설정
     function resetPassword() {
         const email = document.getElementById("email").value.trim();
         if (!email) return alert("이메일을 먼저 입력해주세요.");
-        
         auth.sendPasswordResetEmail(email)
             .then(() => alert("비밀번호 재설정 메일을 보냈습니다."))
             .catch(err => alert("에러: " + err.message));
     }
 
-    // 5. 이메일 변경
+    // 6. 이메일 변경
     function updateEmail() {
         const user = auth.currentUser;
         if (!user) return alert("로그인이 필요합니다.");
