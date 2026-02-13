@@ -84,11 +84,12 @@
     width: 100%;
     margin-top: 50px; /* 게시글 끝과 푸터 사이의 간격 */
 }
+        /* 5. 모바일 반응형 */
         @media (max-width: 600px) {
-            .slide-container { height: 350px; }
-            .header-content { flex-direction: column; gap: 10px; }
-            .header-text { text-align: center; }
-            .header-text h1 { font-size: 2rem; }
+            .logo-area span { font-size: 16px; }
+            nav a { padding: 12px 10px; font-size: 13px; }
+            .photo-grid { grid-template-columns: 1fr; }
+            header h1 { font-size: 22px; }
         }
     </style>
 </head>
@@ -263,5 +264,6 @@ function logout() {
 </script>
 </body>
 </html>
+
 
 
