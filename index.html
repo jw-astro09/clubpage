@@ -27,19 +27,19 @@
 
         .header-content {
             display: flex; align-items: center; justify-content: center;
-            gap: 25px; max-width: 800px; margin: 0 auto;
+            gap: 25px; max-width: 1000px; margin: 0 auto;
         }
 
         .header-logo {
-            width: 100px; height: 100px; background: white;
-            border-radius: 50%; padding: 5px; box-shadow: 0 0 20px rgba(58, 90, 255, 0.5);
+            width: 110px; height: 110px; background: white;
+            border-radius: 80%; padding: 1px; box-shadow: 0 0 15px rgba(58, 90, 255, 0.5);
             flex-shrink: 0;
         }
 
-        .header-logo img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .header-logo img { width: 100%; height: 100%; border-radius: 10%; object-fit: cover; }
         .header-text { text-align: left; }
-        .header-text h1 { margin: 0; font-size: 2.8rem; color: white; letter-spacing: 2px; }
-        .header-text p { margin: 5px 0 0 0; font-size: 1.1rem; color: #7fc7ff; font-weight: bold; }
+        .header-text h1 { margin: 0; font-size: 2.5rem; color: white; letter-spacing: 2px; }
+        .header-text p { margin: 5px 0 0 0; font-size: 1rem; color: #7fc7ff; font-weight: bold; }
 
         nav { background: #11153a; padding: 0 10px; text-align: center; border-bottom: 1px solid #2d367a; overflow-x: auto; white-space: nowrap; }
         nav a { display: inline-block; color: white; padding: 15px 20px; text-decoration: none; font-weight: bold; font-size: 15px; }
@@ -61,7 +61,7 @@
         .btn-next { right: 10px; }
 
         /* 5. 본문 컨텐츠 및 카드 스타일 */
-        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px 100px; }
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px 70px; }
         .card { background: #161b4a; padding: 25px; border-radius: 15px; border: 1px solid #2d367a; margin-bottom: 25px; }
         
         #adminBox { border: 1px solid #ff4d4d; background: rgba(255, 77, 77, 0.05); }
@@ -107,8 +107,12 @@
             <img src="logo.png" onerror="this.src='https://via.placeholder.com/100'">
         </div>
         <div class="header-text">
+            <br>
+            <br>
             <h1>DEEP SKY</h1>
             <p>복성고등학교 천문 & 항공우주 동아리</p>
+            <br>
+            <br>
         </div>
     </div>
 </header>
@@ -264,7 +268,6 @@ function logout() {
 </script>
 </body>
 </html>
-
 
 
 
