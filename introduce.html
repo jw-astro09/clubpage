@@ -66,9 +66,12 @@
         .hidden { display: none !important; }
         footer { background: #070a1d; text-align: center; padding: 20px; font-size: 12px; color: #888; border-top: 1px solid #1b2f80; width: 100%; }
 
+        /* 5. 모바일 반응형 */
         @media (max-width: 600px) {
-            .meaning-grid { grid-template-columns: 1fr; }
-            .intro-card { padding: 25px; }
+            .logo-area span { font-size: 16px; }
+            nav a { padding: 12px 10px; font-size: 13px; }
+            .photo-grid { grid-template-columns: 1fr; }
+            header h1 { font-size: 22px; }
         }
     </style>
 </head>
@@ -182,4 +185,5 @@ function logout() { if(confirm("로그아웃 하시겠습니까?")) auth.signOut
 
 </body>
 </html>
+
 
