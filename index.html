@@ -221,7 +221,7 @@ function showSlides(n) {
 
 function changeSlide(n) { showSlides(slideIndex + n); }
 let slideTimer = setInterval(() => changeSlide(1), 5000);
-function resetTimer() { clearInterval(slideTimer); slideTimer = setInterval(() => changeSlide(1), 5000); }
+function resetTimer() { clearInterval(slideTimer); slideTimer = setInterval(() => changeSlide(1), 3000); }
 
 // 로그인 상태 감지 및 버튼 강제 제어
 auth.onAuthStateChanged(user => {
@@ -273,3 +273,4 @@ function logout() {
 </script>
 </body>
 </html>
+
