@@ -107,10 +107,10 @@
         }
 
         @media (max-width: 600px) {
-            .header-content { flex-direction: column; text-align: center; }
-            .header-text { text-align: center; }
-            .header-text h1 { font-size: 2.2rem; }
-            .slide-container { height: 300px; }
+            .logo-area span { font-size: 16px; }
+            nav a { padding: 12px 10px; font-size: 13px; }
+            .photo-grid { grid-template-columns: 1fr; }
+            header h1 { font-size: 22px; }
         }
     </style>
 </head>
@@ -221,7 +221,7 @@ function showSlides(n) {
 
 function changeSlide(n) { showSlides(slideIndex + n); }
 let slideTimer = setInterval(() => changeSlide(1), 5000);
-function resetTimer() { clearInterval(slideTimer); slideTimer = setInterval(() => changeSlide(1), 3000); }
+function resetTimer() { clearInterval(slideTimer); slideTimer = setInterval(() => changeSlide(1), 5000); }
 
 // 로그인 상태 감지 및 버튼 강제 제어
 auth.onAuthStateChanged(user => {
@@ -273,4 +273,3 @@ function logout() {
 </script>
 </body>
 </html>
-
