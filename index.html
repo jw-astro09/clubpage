@@ -15,10 +15,8 @@
             overflow-x: hidden;
         }
 
-        /* 로그인 버튼 등을 확실히 숨기기 위한 설정 */
-        .hidden { 
-            display: none !important; 
-        }
+        /* 클래스 기반 제어 (!important로 확실히 제어) */
+        .hidden { display: none !important; }
 
         /* 2. 상단 바 */
         .top-bar {
@@ -48,7 +46,7 @@
             gap: 30px; max-width: 1000px; margin: 0 auto;
         }
         .header-logo {
-            width: 110px; height: 110px; background: white;
+            width: 150px; height: 150px; background: white;
             border-radius: 50%; padding: 5px; box-shadow: 0 0 15px rgba(58, 90, 255, 0.5);
             flex-shrink: 0;
         }
@@ -109,7 +107,6 @@
         @media (max-width: 600px) {
             .logo-area span { font-size: 16px; }
             nav a { padding: 12px 10px; font-size: 13px; }
-            .photo-grid { grid-template-columns: 1fr; }
             header h1 { font-size: 22px; }
         }
     </style>
@@ -209,63 +206,50 @@ const auth = firebase.auth();
 const db = firebase.database();
 const ADMIN_EMAIL = "leader.deepsky@gmail.com";
 
+// 슬라이드 로직
 let slideIndex = 0;
 const slides = document.querySelectorAll(".slide-item");
-
 function showSlides(n) {
     if(slides.length === 0) return;
     slides.forEach(s => s.classList.remove("active"));
     slideIndex = (n + slides.length) % slides.length;
     slides[slideIndex].classList.add("active");
-    resetTimer();
 }
-
-function changeSlide(n) { showSlides(slideIndex + n); }
+function changeSlide(n) { showSlides(slideIndex + n); resetTimer(); }
 let slideTimer = setInterval(() => changeSlide(1), 5000);
 function resetTimer() { clearInterval(slideTimer); slideTimer = setInterval(() => changeSlide(1), 5000); }
 
-// 로그인 상태 감지 및 버튼 강제 제어
-// 로그인 상태 감지 및 버튼/이름 제어
-// 로그인 상태 감지 및 버튼/이름 제어
+// 로그인 상태 감지 및 UI 제어 (핵심 수정 부분)
 auth.onAuthStateChanged(user => {
     const status = document.getElementById("userStatus");
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
-    const deleteBtn = document.getElementById("deleteBtn"); // 탈퇴 버튼 추가
+    const deleteBtn = document.getElementById("deleteBtn");
     const adminBox = document.getElementById("adminBox");
 
     if (user) {
+        // 실시간 이름 연동
         db.ref('users/' + user.uid + '/name').on('value', (snapshot) => {
-            const dbName = snapshot.val();
-            const finalName = dbName || user.displayName || user.email.split('@')[0];
+            const finalName = snapshot.val() || user.displayName || user.email.split('@')[0];
             status.innerText = `${finalName}님`;
         });
 
-        loginBtn.style.display = "none";
+        // UI 토글
         loginBtn.classList.add("hidden");
-        
-        // 로그아웃 & 탈퇴 버튼 표시
-        logoutBtn.style.display = "inline-block";
         logoutBtn.classList.remove("hidden");
-        deleteBtn.style.display = "inline-block";
-        deleteBtn.classList.remove("hidden");
-        
+        deleteBtn.classList.remove("hidden"); // 관리자 포함 모두에게 노출
+
         if (user.email === ADMIN_EMAIL) {
-            adminBox.style.display = "block";
             adminBox.classList.remove("hidden");
-            deleteBtn.style.display = "none"; // 관리자는 실수로 탈퇴하지 않도록 숨김 처리 가능
+        } else {
+            adminBox.classList.add("hidden");
         }
     } else {
+        // 비로그인 상태
         status.innerText = "로그인 해주세요";
-        loginBtn.style.display = "inline-block";
         loginBtn.classList.remove("hidden");
-        
-        logoutBtn.style.display = "none";
         logoutBtn.classList.add("hidden");
-        deleteBtn.style.display = "none";
         deleteBtn.classList.add("hidden");
-        
-        adminBox.style.display = "none";
         adminBox.classList.add("hidden");
     }
 });
@@ -277,7 +261,6 @@ function deleteAccount() {
 
     if (confirm("정말로 탈퇴하시겠습니까? 계정과 모든 데이터가 즉시 삭제됩니다.")) {
         const uid = user.uid;
-        // 1. DB 데이터 선삭제 -> 2. 계정 삭제
         db.ref('users/' + uid).remove()
             .then(() => {
                 return user.delete();
@@ -297,11 +280,13 @@ function deleteAccount() {
     }
 }
 
+// 공지사항 로드
 db.ref("weekProgram").on("value", snapshot => {
     const data = snapshot.val();
     document.getElementById("weekProgramText").innerText = data ? data.text : "공지가 없습니다.";
 });
 
+// 공지사항 저장
 function saveProgram() {
     const txt = document.getElementById("weekProgramInput").value;
     if(!txt.trim()) return alert("내용을 입력하세요.");
