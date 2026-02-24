@@ -142,22 +142,58 @@ function googleLogin() {
 }
 
 // 2. 깃허브 로그인 수정
+구글과 깃허브 로그인 모두 DB 저장이 안 된다면, 가장 유력한 원인은 db 객체가 선언되기 전에 함수가 실행되었거나, 로그인 팝업창이 닫히면서 리다이렉트가 일어나 코드가 중간에 끊기는 현상 때문일 수 있습니다.
+
+특히 깃허브는 구글과 달리 이메일 정보가 공개되지 않거나 이름(displayName)이 비어있는 경우가 많아 더 세밀한 처리가 필요합니다.
+
+login.html의 스크립트 부분을 아래의 최종 안정화 버전으로 교체해 보세요.
+
+1. login.html 소셜 로그인 함수 최종 수정
+JavaScript
+// 1. 구글 로그인
+function googleLogin() {
+    auth.signInWithPopup(googleProvider)
+        .then((result) => {
+            const user = result.user;
+            
+            // 데이터베이스 저장 로직을 변수에 담아 실행 보장
+            const updates = {};
+            updates['/users/' + user.uid] = {
+                name: user.displayName || "구글 사용자",
+                email: user.email,
+                lastLogin: new Date().toLocaleString()
+            };
+
+            // ref().update()를 사용하여 데이터 유실 방지
+            return db.ref().update(updates).then(() => {
+                alert(user.displayName + "님, 환영합니다!");
+                location.href = "index.html";
+            });
+        })
+        .catch((error) => handleAuthError(error));
+}
+
+// 2. 깃허브 로그인
 function githubLogin() {
     auth.signInWithPopup(githubProvider)
         .then((result) => {
             const user = result.user;
 
-            // [추가] 깃허브는 이름(displayName)이 없을 수 있으므로 이메일 앞자리 등으로 대체 로직 추가
-            const userName = user.displayName || user.email.split('@')[0] || "회원";
+            // 깃허브는 이름이나 이메일이 null인 경우가 많으므로 방어 코드 작성
+            const userName = user.displayName || (user.email ? user.email.split('@')[0] : "GitHub 사용자");
+            const userEmail = user.email || "이메일 비공개";
 
-            db.ref('users/' + user.uid).update({
+            const updates = {};
+            updates['/users/' + user.uid] = {
                 name: userName,
-                email: user.email,
+                email: userEmail,
                 lastLogin: new Date().toLocaleString()
-            });
+            };
 
-            alert(userName + "님, 환영합니다! (GitHub)");
-            location.href = "index.html";
+            return db.ref().update(updates).then(() => {
+                alert(userName + "님, 환영합니다! (GitHub)");
+                location.href = "index.html";
+            });
         })
         .catch((error) => handleAuthError(error));
 }
