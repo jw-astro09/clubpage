@@ -125,6 +125,7 @@
         <span id="userStatus">접속 중...</span>
         <button id="loginBtn" onclick="location.href='login.html'">로그인</button>
         <button id="logoutBtn" class="hidden" onclick="logout()">로그아웃</button>
+        <button id="deleteBtn" class="hidden" onclick="deleteAccount()" style="background: #ff4d4d;">회원탈퇴</button>
     </div>
 </div>
 
@@ -225,40 +226,76 @@ function resetTimer() { clearInterval(slideTimer); slideTimer = setInterval(() =
 
 // 로그인 상태 감지 및 버튼 강제 제어
 // 로그인 상태 감지 및 버튼/이름 제어
+// 로그인 상태 감지 및 버튼/이름 제어
 auth.onAuthStateChanged(user => {
     const status = document.getElementById("userStatus");
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
+    const deleteBtn = document.getElementById("deleteBtn"); // 탈퇴 버튼 추가
     const adminBox = document.getElementById("adminBox");
 
     if (user) {
-        // [수정] DB에서 관리자가 수정한 이름이 있는지 실시간으로 확인
         db.ref('users/' + user.uid + '/name').on('value', (snapshot) => {
             const dbName = snapshot.val();
-            // 1. DB에 이름이 있으면 그걸 쓰고, 2. 없으면 프로필 이름, 3. 그것도 없으면 이메일 앞부분
             const finalName = dbName || user.displayName || user.email.split('@')[0];
             status.innerText = `${finalName}님`;
         });
 
         loginBtn.style.display = "none";
         loginBtn.classList.add("hidden");
+        
+        // 로그아웃 & 탈퇴 버튼 표시
         logoutBtn.style.display = "inline-block";
         logoutBtn.classList.remove("hidden");
+        deleteBtn.style.display = "inline-block";
+        deleteBtn.classList.remove("hidden");
         
         if (user.email === ADMIN_EMAIL) {
             adminBox.style.display = "block";
             adminBox.classList.remove("hidden");
+            deleteBtn.style.display = "none"; // 관리자는 실수로 탈퇴하지 않도록 숨김 처리 가능
         }
     } else {
         status.innerText = "로그인 해주세요";
         loginBtn.style.display = "inline-block";
         loginBtn.classList.remove("hidden");
+        
         logoutBtn.style.display = "none";
         logoutBtn.classList.add("hidden");
+        deleteBtn.style.display = "none";
+        deleteBtn.classList.add("hidden");
+        
         adminBox.style.display = "none";
         adminBox.classList.add("hidden");
     }
 });
+
+// 회원 탈퇴 함수
+function deleteAccount() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    if (confirm("정말로 탈퇴하시겠습니까? 계정과 모든 데이터가 즉시 삭제됩니다.")) {
+        const uid = user.uid;
+        // 1. DB 데이터 선삭제 -> 2. 계정 삭제
+        db.ref('users/' + uid).remove()
+            .then(() => {
+                return user.delete();
+            })
+            .then(() => {
+                alert("그동안 이용해주셔서 감사합니다.");
+                location.reload();
+            })
+            .catch(err => {
+                if (err.code === 'auth/requires-recent-login') {
+                    alert("보안을 위해 다시 로그인한 직후에만 탈퇴가 가능합니다.");
+                    auth.signOut().then(() => location.href = 'login.html');
+                } else {
+                    alert("오류 발생: " + err.message);
+                }
+            });
+    }
+}
 
 db.ref("weekProgram").on("value", snapshot => {
     const data = snapshot.val();
