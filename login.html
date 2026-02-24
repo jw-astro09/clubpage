@@ -179,23 +179,26 @@ function githubLogin() {
         .then((result) => {
             const user = result.user;
 
-            // 깃허브는 이름이나 이메일이 null인 경우가 많으므로 방어 코드 작성
-            const userName = user.displayName || (user.email ? user.email.split('@')[0] : "GitHub 사용자");
-            const userEmail = user.email || "이메일 비공개";
+            // 깃허브에서 정보를 못 가져올 경우를 대비한 대체값 설정
+            const userName = user.displayName || "GitHub 유저";
+            const userEmail = user.email || "Private Email"; // 이메일이 없어도 에러 안 나게 함
 
-            const updates = {};
-            updates['/users/' + user.uid] = {
+            const userData = {
                 name: userName,
                 email: userEmail,
                 lastLogin: new Date().toLocaleString()
             };
 
-            return db.ref().update(updates).then(() => {
+            // DB에 저장 시도
+            return db.ref('users/' + user.uid).update(userData).then(() => {
                 alert(userName + "님, 환영합니다! (GitHub)");
                 location.href = "index.html";
             });
         })
-        .catch((error) => handleAuthError(error));
+        .catch((error) => {
+            console.error("GitHub 에러 상세:", error); // 에러 원인을 콘솔에 찍음
+            handleAuthError(error);
+        });
 }
 
     // 공통 에러 핸들러
