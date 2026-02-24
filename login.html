@@ -115,41 +115,6 @@
     const googleProvider = new firebase.auth.GoogleAuthProvider();
     const githubProvider = new firebase.auth.GithubAuthProvider();
 
-    // 1. 구글 로그인 수정
-function googleLogin() {
-    auth.signInWithPopup(googleProvider)
-        .then((result) => {
-            const user = result.user;
-            
-            // 데이터베이스에 저장할 객체 생성
-            const userData = {
-                name: user.displayName || "이름없음",
-                email: user.email,
-                lastLogin: new Date().toLocaleString()
-            };
-
-            // [핵심] DB의 users/UID 경로에 데이터 업데이트
-            // .update를 쓰면 기존에 데이터가 있어도 이름/이메일만 갱신됩니다.
-            return db.ref('users/' + user.uid).update(userData).then(() => {
-                alert(user.displayName + "님, 환영합니다!");
-                location.href = "index.html";
-            });
-        })
-        .catch((error) => {
-            console.error("구글 로그인 에러:", error);
-            handleAuthError(error);
-        });
-}
-
-// 2. 깃허브 로그인 수정
-구글과 깃허브 로그인 모두 DB 저장이 안 된다면, 가장 유력한 원인은 db 객체가 선언되기 전에 함수가 실행되었거나, 로그인 팝업창이 닫히면서 리다이렉트가 일어나 코드가 중간에 끊기는 현상 때문일 수 있습니다.
-
-특히 깃허브는 구글과 달리 이메일 정보가 공개되지 않거나 이름(displayName)이 비어있는 경우가 많아 더 세밀한 처리가 필요합니다.
-
-login.html의 스크립트 부분을 아래의 최종 안정화 버전으로 교체해 보세요.
-
-1. login.html 소셜 로그인 함수 최종 수정
-JavaScript
 // 1. 구글 로그인
 function googleLogin() {
     auth.signInWithPopup(googleProvider)
