@@ -121,17 +121,24 @@ function googleLogin() {
         .then((result) => {
             const user = result.user;
             
-            // [중요] 구글 로그인을 해도 DB에 이름을 강제로 저장해줘야 관리자가 볼 수 있습니다.
-            db.ref('users/' + user.uid).update({
-                name: user.displayName,
+            // 데이터베이스에 저장할 객체 생성
+            const userData = {
+                name: user.displayName || "이름없음",
                 email: user.email,
                 lastLogin: new Date().toLocaleString()
-            });
+            };
 
-            alert(user.displayName + "님, 환영합니다!");
-            location.href = "index.html"; // 로그인 성공 후 이동
+            // [핵심] DB의 users/UID 경로에 데이터 업데이트
+            // .update를 쓰면 기존에 데이터가 있어도 이름/이메일만 갱신됩니다.
+            return db.ref('users/' + user.uid).update(userData).then(() => {
+                alert(user.displayName + "님, 환영합니다!");
+                location.href = "index.html";
+            });
         })
-        .catch((error) => handleAuthError(error));
+        .catch((error) => {
+            console.error("구글 로그인 에러:", error);
+            handleAuthError(error);
+        });
 }
 
 // 2. 깃허브 로그인 수정
