@@ -224,6 +224,7 @@ let slideTimer = setInterval(() => changeSlide(1), 5000);
 function resetTimer() { clearInterval(slideTimer); slideTimer = setInterval(() => changeSlide(1), 5000); }
 
 // 로그인 상태 감지 및 버튼 강제 제어
+// 로그인 상태 감지 및 버튼/이름 제어
 auth.onAuthStateChanged(user => {
     const status = document.getElementById("userStatus");
     const loginBtn = document.getElementById("loginBtn");
@@ -231,11 +232,19 @@ auth.onAuthStateChanged(user => {
     const adminBox = document.getElementById("adminBox");
 
     if (user) {
-        status.innerText = `${user.displayName || user.email.split('@')[0]}님`;
+        // [수정] DB에서 관리자가 수정한 이름이 있는지 실시간으로 확인
+        db.ref('users/' + user.uid + '/name').on('value', (snapshot) => {
+            const dbName = snapshot.val();
+            // 1. DB에 이름이 있으면 그걸 쓰고, 2. 없으면 프로필 이름, 3. 그것도 없으면 이메일 앞부분
+            const finalName = dbName || user.displayName || user.email.split('@')[0];
+            status.innerText = `${finalName}님`;
+        });
+
         loginBtn.style.display = "none";
         loginBtn.classList.add("hidden");
         logoutBtn.style.display = "inline-block";
         logoutBtn.classList.remove("hidden");
+        
         if (user.email === ADMIN_EMAIL) {
             adminBox.style.display = "block";
             adminBox.classList.remove("hidden");
