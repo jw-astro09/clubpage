@@ -256,37 +256,7 @@ function githubLogin() {
         }
     }
 
-    // 7. 회원 탈퇴 기능
-function deleteAccount() {
-    const user = auth.currentUser;
-
-    if (!user) {
-        return alert("로그인이 되어있어야 탈퇴가 가능합니다. 먼저 로그인해주세요.");
-    }
-
-    if (confirm("정말로 탈퇴하시겠습니까? 모든 정보와 활동 기록이 삭제됩니다.")) {
-        const uid = user.uid;
-
-        // 1. 먼저 DB에서 사용자 정보를 삭제합니다.
-        db.ref('users/' + uid).remove()
-            .then(() => {
-                // 2. 인증 계정을 삭제합니다.
-                return user.delete();
-            })
-            .then(() => {
-                alert("탈퇴가 완료되었습니다. 이용해주셔서 감사합니다.");
-                location.href = "index.html";
-            })
-            .catch((err) => {
-                console.error(err);
-                if (err.code === 'auth/requires-recent-login') {
-                    alert("보안을 위해 다시 로그인한 직후에만 탈퇴가 가능합니다. 로그아웃 후 다시 로그인하여 시도해주세요.");
-                } else {
-                    alert("탈퇴 처리 중 오류 발생: " + err.message);
-                }
-            });
-    }
-}
+    
 </script>
 
 </body>
