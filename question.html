@@ -11,56 +11,43 @@
         .logo-area { display: flex; align-items: center; text-decoration: none; color: white; }
         .logo-area img { width: 35px; height: 35px; margin-right: 10px; border-radius: 50%; }
         .logo-area span { font-size: 18px; font-weight: bold; }
-        .auth-bar { font-size: 14px; display: flex; align-items: center; }
-        .auth-bar button { padding: 5px 12px; margin-left: 10px; border-radius: 5px; border: none; background: #3a5aff; color: white; cursor: pointer; font-weight: bold; }
+        .auth-bar { font-size: 14px; display: flex; align-items: center; gap: 10px; }
+        .auth-bar button { padding: 5px 12px; border-radius: 5px; border: none; background: #3a5aff; color: white; cursor: pointer; font-weight: bold; }
+        
         header { background: linear-gradient(to right, #0d1b52, #1b2f80); padding: 40px 20px; text-align: center; }
         nav { background: #11153a; padding: 0 10px; text-align: center; border-bottom: 1px solid #2d367a; overflow-x: auto; white-space: nowrap; }
         nav a { display: inline-block; color: white; padding: 15px 20px; text-decoration: none; font-weight: bold; font-size: 15px; }
+        nav a:hover { color: #7fc7ff; }
+    
         .container { max-width: 900px; margin: 30px auto; padding: 0 20px 100px; }
         .search-box { margin-bottom: 20px; }
         .search-box input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #1b2f80; background: #161b4a; color: white; font-size: 15px; }
         .write-card { background: #161b4a; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #2d367a; }
         .write-card input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #1b2f80; background: #0b0f2b; color: white; margin-bottom: 10px; }
         .btn-main { width: 100%; padding: 12px; background: #3a5aff; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        
         .q-card { background: #161b4a; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #2d367a; }
         .q-meta { font-size: 12px; color: #7fc7ff; margin-bottom: 8px; }
         .q-text { font-weight: bold; font-size: 16px; margin-bottom: 15px; display: block; border-bottom: 1px solid #2d367a; padding-bottom: 10px; }
         
-        /* 답글 스타일 수정 */
         .replies-container { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
         .ans-box { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #28a745; position: relative; }
         .ans-content { font-size: 14px; color: #eee; line-height: 1.4; padding-right: 30px; }
         .ans-author { font-size: 11px; color: #7fc7ff; margin-top: 5px; display: block; font-weight: bold; }
-        
-        /* 답글 개별 삭제 버튼 */
         .btn-ans-del { position: absolute; top: 10px; right: 10px; background: transparent; color: #ff4d4d; border: none; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .btn-ans-del:hover { text-decoration: underline; }
 
         .answer-controls { margin-top: 20px; padding-top: 15px; border-top: 1px dashed #2d367a; display: flex; gap: 5px; }
         .answer-controls input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #1b2f80; background: #0b0f2b; color: white; }
         .btn-ans { background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
         .btn-del { background: #ff4d4d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
         .hidden { display: none !important; }
-        footer { 
-    background: #070a1d; 
-    text-align: center; 
-    padding: 30px 20px; /* 여백을 조금 더 주면 깔끔합니다 */
-    font-size: 12px; 
-    color: #888; 
-    border-top: 1px solid #1b2f80; 
-    width: 100%;
-    margin-top: 50px; /* 게시글 끝과 푸터 사이의 간격 */
-}
+        footer { background: #070a1d; text-align: center; padding: 30px 20px; font-size: 12px; color: #888; border-top: 1px solid #1b2f80; width: 100%; margin-top: 50px; }
 
-        /* 5. 모바일 반응형 */
         @media (max-width: 600px) {
             .logo-area span { font-size: 16px; }
             nav a { padding: 12px 10px; font-size: 13px; }
-            .photo-grid { grid-template-columns: 1fr; }
-            header h1 { font-size: 22px; }
         }
-
-
     </style>
 </head>
 <body>
@@ -71,9 +58,10 @@
         <span>DEEP SKY</span>
     </a>
     <div class="auth-bar">
-        <span id="userStatus">불러오는 중...</span>
+        <span id="userStatus">접속 중...</span>
         <button id="loginBtn" onclick="location.href='login.html'">로그인</button>
         <button id="logoutBtn" class="hidden" onclick="logout()">로그아웃</button>
+        <button id="deleteBtn" class="hidden" onclick="deleteAccount()" style="background: #ff4d4d;">회원탈퇴</button>
     </div>
 </div>
 
@@ -125,26 +113,49 @@ const db = firebase.database();
 const ADMIN_EMAIL = "leader.deepsky@gmail.com";
 
 let currentUser = null;
+let currentUserName = "익명";
 
+// 1. 로그인 상태 감지 (관리자 구분 없이 탈퇴 버튼 노출)
 auth.onAuthStateChanged(user => {
     currentUser = user;
-    document.getElementById("userStatus").innerText = user ? `${user.displayName || user.email.split('@')[0]}님` : "로그인 해주세요";
-    document.getElementById("loginBtn").className = user ? "hidden" : "";
-    document.getElementById("logoutBtn").className = user ? "" : "hidden";
+    const status = document.getElementById("userStatus");
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const deleteBtn = document.getElementById("deleteBtn");
+
+    if (user) {
+        db.ref('users/' + user.uid + '/name').on('value', (snapshot) => {
+            currentUserName = snapshot.val() || user.displayName || user.email.split('@')[0];
+            status.innerText = `${currentUserName}님`;
+        });
+
+        loginBtn.classList.add("hidden");
+        logoutBtn.classList.remove("hidden");
+        deleteBtn.classList.remove("hidden"); // 관리자 포함 모두 노출
+    } else {
+        currentUserName = "익명";
+        status.innerText = "로그인 해주세요";
+        loginBtn.classList.remove("hidden");
+        logoutBtn.classList.add("hidden");
+        deleteBtn.classList.add("hidden");
+    }
     loadQuestions();
 });
 
+// 2. 질문 등록
 function addQuestion() {
     const text = document.getElementById("qInput").value.trim();
     if(!text) return alert("질문을 입력해주세요.");
+    
     db.ref("questions").push({
         text: text,
-        author: currentUser ? (currentUser.displayName || currentUser.email.split('@')[0]) : "익명",
+        author: currentUserName,
         email: currentUser ? currentUser.email : "anonymous",
         createdAt: firebase.database.ServerValue.TIMESTAMP
     }).then(() => document.getElementById("qInput").value = "");
 }
 
+// 3. 질문 목록 불러오기
 function loadQuestions() {
     db.ref("questions").on("value", snapshot => {
         const list = document.getElementById("questionList");
@@ -157,13 +168,11 @@ function loadQuestions() {
             const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
             const isAuthor = currentUser && currentUser.email === q.email;
             
-            // 답글 렌더링
             let repliesHtml = '<div class="replies-container">';
             if (q.replies) {
                 Object.keys(q.replies).forEach(rKey => {
                     const r = q.replies[rKey];
                     const isReplyAuthor = currentUser && currentUser.email === r.email;
-                    
                     repliesHtml += `
                         <div class="ans-box">
                             <div class="ans-content"><b>A.</b> ${r.text}</div>
@@ -192,32 +201,52 @@ function loadQuestions() {
     });
 }
 
+// 4. 답글 저장
 function saveAnswer(qKey) {
     const ansText = document.getElementById("ans_"+qKey).value.trim();
     if(!ansText) return alert("내용을 입력하세요.");
-    if(!currentUser) return alert("로그인이 필요합니다.");
-
+    
     db.ref(`questions/${qKey}/replies`).push({
         text: ansText,
-        author: currentUser.displayName || currentUser.email.split('@')[0],
-        email: currentUser.email, // 삭제 권한 확인을 위해 이메일 저장
+        author: currentUserName,
+        email: currentUser.email,
         createdAt: firebase.database.ServerValue.TIMESTAMP
     }).then(() => {
         document.getElementById("ans_"+qKey).value = "";
     });
 }
 
-// 질문 전체 삭제
+// 5. 삭제 기능
 function deleteQuestion(qKey) {
-    if(confirm("이 질문과 모든 답글이 삭제됩니다. 계속하시겠습니까?")) db.ref("questions/"+qKey).remove();
+    if(confirm("이 질문과 모든 답글이 삭제됩니다.")) db.ref("questions/"+qKey).remove();
 }
 
-// 특정 답글만 삭제 (새로 추가됨)
 function deleteReply(qKey, rKey) {
-    if(confirm("이 답글을 삭제하시겠습니까?")) {
-        db.ref(`questions/${qKey}/replies/${rKey}`).remove()
-            .then(() => alert("답글이 삭제되었습니다."))
-            .catch(err => alert("삭제 실패: " + err.message));
+    if(confirm("이 답글을 삭제하시겠습니까?")) db.ref(`questions/${qKey}/replies/${rKey}`).remove();
+}
+
+// 6. 회원 탈퇴 (관리자 보호 로직 제거)
+function deleteAccount() {
+    const user = auth.currentUser;
+    if (!user) return alert("로그인 상태가 아닙니다.");
+
+    if (confirm("정말로 탈퇴하시겠습니까? 계정과 개인정보가 즉시 삭제됩니다.")) {
+        const uid = user.uid;
+        db.ref('users/' + uid).remove()
+            .then(() => {
+                return user.delete();
+            })
+            .then(() => {
+                alert("탈퇴가 완료되었습니다.");
+                location.href = "index.html";
+            })
+            .catch(err => {
+                if (err.code === 'auth/requires-recent-login') {
+                    alert("보안을 위해 다시 로그인한 직후에만 탈퇴가 가능합니다.");
+                } else {
+                    alert("탈퇴 오류: " + err.message);
+                }
+            });
     }
 }
 
@@ -227,9 +256,7 @@ function filterQuestions() {
     for (let card of cards) card.style.display = card.innerText.toLowerCase().includes(term) ? "" : "none";
 }
 
-function logout() { if(confirm("로그아웃 하시겠습니까?")) auth.signOut(); }
+function logout() { if(confirm("로그아웃 하시겠습니까?")) auth.signOut().then(() => location.reload()); }
 </script>
 </body>
 </html>
-
-
